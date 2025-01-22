@@ -1,74 +1,136 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from "react"
+import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native"
+import { StatusBar } from "expo-status-bar"
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const { width, height } = Dimensions.get("window")
 
-export default function HomeScreen() {
+export default function LandingPage() {
   return (
-    <ParallaxScrollView 
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+    <ScrollView style={styles.container}>
+      <StatusBar style="auto" />
+      <View style={styles.header}>
+        <Image source={require("../../assets/images/7c2d20bbb14eac6d2e02a3360632cb4b.jpg")} style={styles.logo} />
+        <Text style={styles.title}>Welcome to CinemaWorld</Text>
+      </View>
+
+      <View style={styles.featuredMovie}>
+        <Image source={require("../../assets/images/7c2d20bbb14eac6d2e02a3360632cb4b.jpg")} style={styles.featuredImage} />
+        <View style={styles.overlay}>
+          <Text style={styles.featuredTitle}>Featured Movie</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Book Now</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Now Showing</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {[1, 2, 3, 4].map((item) => (
+            <View key={item} style={styles.movieCard}>
+              <Image source={require(`../../assets/images/7c2d20bbb14eac6d2e02a3360632cb4b.jpg`)} style={styles.movieImage} />
+              <Text style={styles.movieTitle}>Movie {item}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+
+      <TouchableOpacity style={styles.ctaButton}>
+        <Text style={styles.ctaButtonText}>Explore All Movies</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  )
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  header: {
+    alignItems: "center",
+    padding: 20,
+    paddingTop: 60,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
   },
-});
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: 10,
+  },
+  featuredMovie: {
+    width: width,
+    height: height * 0.4,
+    position: "relative",
+  },
+  featuredImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+    padding: 20,
+  },
+  featuredTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: "#E50914",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignSelf: "flex-start",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  section: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 10,
+  },
+  movieCard: {
+    marginRight: 15,
+    width: 120,
+  },
+  movieImage: {
+    width: 120,
+    height: 180,
+    borderRadius: 8,
+  },
+  movieTitle: {
+    color: "#fff",
+    marginTop: 5,
+    textAlign: "center",
+  },
+  ctaButton: {
+    backgroundColor: "#E50914",
+    margin: 20,
+    padding: 15,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  ctaButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+})
+
