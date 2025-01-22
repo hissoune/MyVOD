@@ -1,6 +1,7 @@
 import React from "react"
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native"
 import { StatusBar } from "expo-status-bar"
+import { Link } from "expo-router"
 
 const { width, height } = Dimensions.get("window")
 
@@ -9,12 +10,12 @@ export default function LandingPage() {
     <ScrollView style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.header}>
-        <Image source={require("../../assets/images/7c2d20bbb14eac6d2e02a3360632cb4b.jpg")} style={styles.logo} />
+        <Image source={require("../assets/images/adaptive-icon.png")} style={styles.logo} />
         <Text style={styles.title}>Welcome to CinemaWorld</Text>
       </View>
 
       <View style={styles.featuredMovie}>
-        <Image source={require("../../assets/images/7c2d20bbb14eac6d2e02a3360632cb4b.jpg")} style={styles.featuredImage} />
+        <Image source={require("../assets/images/adaptive-icon.png")} style={styles.featuredImage} />
         <View style={styles.overlay}>
           <Text style={styles.featuredTitle}>Featured Movie</Text>
           <TouchableOpacity style={styles.button}>
@@ -28,16 +29,26 @@ export default function LandingPage() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {[1, 2, 3, 4].map((item) => (
             <View key={item} style={styles.movieCard}>
-              <Image source={require(`../../assets/images/7c2d20bbb14eac6d2e02a3360632cb4b.jpg`)} style={styles.movieImage} />
+              <Image source={require(`../assets/images/adaptive-icon.png`)} style={styles.movieImage} />
               <Text style={styles.movieTitle}>Movie {item}</Text>
             </View>
           ))}
         </ScrollView>
       </View>
-
+     <View style={styles.butonsContainer}>
+      <Link href={'/'}> 
       <TouchableOpacity style={styles.ctaButton}>
-        <Text style={styles.ctaButtonText}>Explore All Movies</Text>
+        <Text style={styles.ctaButtonText}>Log in </Text>
       </TouchableOpacity>
+      </Link>
+      <Link href={'/'}>
+      <TouchableOpacity style={styles.ctaButton}>
+        <Text style={styles.ctaButtonText}>Create Acount</Text>
+      </TouchableOpacity>
+      </Link>
+      
+     </View>
+     
     </ScrollView>
   )
 }
@@ -120,6 +131,12 @@ const styles = StyleSheet.create({
     marginTop: 5,
     textAlign: "center",
   },
+  butonsContainer:{
+    padding: 20,
+    display:"flex",
+    // justifyContent: "space-between",
+
+  },
   ctaButton: {
     backgroundColor: "#E50914",
     margin: 20,
@@ -133,4 +150,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 })
-
