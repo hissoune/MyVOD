@@ -1,11 +1,14 @@
 import React from "react"
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native"
 import { StatusBar } from "expo-status-bar"
-import { Link } from "expo-router"
+import { Link, useRouter } from "expo-router"
 
 const { width, height } = Dimensions.get("window")
 
 export default function LandingPage() {
+  
+  const router =useRouter()
+  
   return (
     <ScrollView style={styles.container}>
       <StatusBar style="auto" />
@@ -36,16 +39,16 @@ export default function LandingPage() {
         </ScrollView>
       </View>
      <View style={styles.butonsContainer}>
-      <Link href={'/'}> 
-      <TouchableOpacity style={styles.ctaButton}>
+      
+      <TouchableOpacity onPress={()=> router.push('/auth/login')} style={styles.ctaButton}>
         <Text style={styles.ctaButtonText}>Log in </Text>
       </TouchableOpacity>
-      </Link>
-      <Link href={'/'}>
-      <TouchableOpacity style={styles.ctaButton}>
+      
+      
+      <TouchableOpacity onPress={()=> router.push('/auth/register')} style={styles.ctaButton}>
         <Text style={styles.ctaButtonText}>Create Acount</Text>
       </TouchableOpacity>
-      </Link>
+    
       
      </View>
      
@@ -134,7 +137,7 @@ const styles = StyleSheet.create({
   butonsContainer:{
     padding: 20,
     display:"flex",
-    // justifyContent: "space-between",
+     justifyContent: "space-between",
 
   },
   ctaButton: {
