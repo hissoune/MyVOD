@@ -41,12 +41,12 @@ export default function LandingPage() {
      <View style={styles.butonsContainer}>
       
       <TouchableOpacity onPress={()=> router.push('/auth/login')} style={styles.ctaButton}>
-        <Text style={styles.ctaButtonText}>Log in </Text>
+        <Text style={styles.ctaButtonText}>Sign In </Text>
       </TouchableOpacity>
       
       
       <TouchableOpacity onPress={()=> router.push('/auth/register')} style={styles.ctaButton}>
-        <Text style={styles.ctaButtonText}>Create Acount</Text>
+        <Text style={styles.ctaButtonText}>Sign Up</Text>
       </TouchableOpacity>
     
       
@@ -134,19 +134,20 @@ const styles = StyleSheet.create({
     marginTop: 5,
     textAlign: "center",
   },
-  butonsContainer:{
-    padding: 20,
-    display:"flex",
-     justifyContent: "space-between",
-
+  butonsContainer: {
+    padding: 1,
+    flexDirection: "row", 
+    justifyContent: "space-between", 
   },
   ctaButton: {
     backgroundColor: "#E50914",
-    margin: 20,
-    padding: 15,
+    padding: 10,
     borderRadius: 5,
     alignItems: "center",
+    flex: 1, 
+    marginHorizontal: 5, 
   },
+  
   ctaButtonText: {
     color: "#fff",
     fontSize: 18,
