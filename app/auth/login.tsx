@@ -24,8 +24,7 @@ export default function LoginScreen() {
 
   const handleLogin = (values:any) => {
     console.log("Login values:", values)
-    // Implement actual login logic here
-    return values
+    router.push("/(tabs)")
   }
 
   return (
@@ -36,7 +35,7 @@ export default function LoginScreen() {
         <Text style={styles.title}>CinemaWorld</Text>
       </View>
       <Formik
-        initialValues={{ email: "", password: "" }}
+        initialValues={{ email: "khalidhissoune962@gmail.com", password: "khalidhissoune962@gmail.com" }}
         onSubmit={handleLogin}
         validationSchema={validationSchema}
       >
