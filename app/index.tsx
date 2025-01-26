@@ -1,11 +1,14 @@
 import React from "react"
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native"
 import { StatusBar } from "expo-status-bar"
-import { Link } from "expo-router"
+import { Link, useRouter } from "expo-router"
 
 const { width, height } = Dimensions.get("window")
 
 export default function LandingPage() {
+  
+  const router =useRouter()
+  
   return (
     <ScrollView style={styles.container}>
       <StatusBar style="auto" />
@@ -36,16 +39,16 @@ export default function LandingPage() {
         </ScrollView>
       </View>
      <View style={styles.butonsContainer}>
-      <Link href={'/'}> 
-      <TouchableOpacity style={styles.ctaButton}>
-        <Text style={styles.ctaButtonText}>Log in </Text>
+      
+      <TouchableOpacity onPress={()=> router.push('/auth/login')} style={styles.ctaButton}>
+        <Text style={styles.ctaButtonText}>Sign In </Text>
       </TouchableOpacity>
-      </Link>
-      <Link href={'/'}>
-      <TouchableOpacity style={styles.ctaButton}>
-        <Text style={styles.ctaButtonText}>Create Acount</Text>
+      
+      
+      <TouchableOpacity onPress={()=> router.push('/auth/register')} style={styles.ctaButton}>
+        <Text style={styles.ctaButtonText}>Sign Up</Text>
       </TouchableOpacity>
-      </Link>
+    
       
      </View>
      
@@ -131,19 +134,20 @@ const styles = StyleSheet.create({
     marginTop: 5,
     textAlign: "center",
   },
-  butonsContainer:{
-    padding: 20,
-    display:"flex",
-    // justifyContent: "space-between",
-
+  butonsContainer: {
+    padding: 1,
+    flexDirection: "row", 
+    justifyContent: "space-between", 
   },
   ctaButton: {
     backgroundColor: "#E50914",
-    margin: 20,
-    padding: 15,
+    padding: 10,
     borderRadius: 5,
     alignItems: "center",
+    flex: 1, 
+    marginHorizontal: 5, 
   },
+  
   ctaButtonText: {
     color: "#fff",
     fontSize: 18,
