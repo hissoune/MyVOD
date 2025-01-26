@@ -12,7 +12,7 @@ const movies = [
   { id: 4, title: "Pulp Fiction", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
 ]
 
-const series = [
+const sessions = [
   { id: 1, title: "Stranger Things", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
   { id: 2, title: "Breaking Bad", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
   { id: 3, title: "The Crown", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
@@ -25,11 +25,11 @@ export default function LandingPage() {
   const router = useRouter()
   const [activeCategory, setActiveCategory] = useState("All")
 
-  const renderContent = (items, title) => (
+  const renderContent = (items:any, title:any) => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
-        {items.map((item) => (
+        {items.map((item:any) => (
           <TouchableOpacity key={item.id} style={styles.itemCard}>
             <Image source={{ uri: item.image }} style={styles.itemImage} />
             <View style={styles.itemTitleContainer}>
@@ -79,7 +79,7 @@ export default function LandingPage() {
       </ScrollView>
 
       {renderContent(movies, "🎬 Popular Movies")}
-      {renderContent(series, "📺 Trending Series")}
+      {renderContent(sessions, "📺 Trending Sesions")}
     </ScrollView>
   )
 }
