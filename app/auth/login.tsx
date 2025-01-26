@@ -13,7 +13,8 @@ import { StatusBar } from "expo-status-bar"
 import { Formik } from "formik"
 import * as yup from "yup"
 import { useRouter } from "expo-router"
-
+import { useMutation } from "@tanstack/react-query";
+import { login } from '../(services)/api/api';
 const validationSchema = yup.object().shape({
   email: yup.string().required('Email is required').email('Enter a valid email').label('Email'),
   password: yup.string().required('Password is required').min(4, 'Password must be at least 4 characters').label('Password'),
@@ -22,10 +23,16 @@ const validationSchema = yup.object().shape({
 export default function LoginScreen() {
     const router =useRouter()
 
-  const handleLogin = (values:any) => {
-    console.log("Login values:", values)
-    router.push("/(tabs)")
-  }
+    const loginMutation = useMutation(login, {
+        onSuccess: (data) => {
+          console.log("Login Successful:", data);
+          router.push("/(tabs)");
+        },
+        onError: (error:any) => {
+          console.error("Login Error:", error.response?.data || error.message);
+          
+        },
+      });
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
@@ -35,9 +42,12 @@ export default function LoginScreen() {
         <Text style={styles.title}>CinemaWorld</Text>
       </View>
       <Formik
-        initialValues={{ email: "khalidhissoune962@gmail.com", password: "khalidhissoune962@gmail.com" }}
-        onSubmit={handleLogin}
+        initialValues={{ email: "pixes@mailinator.com", password: "pixes@mailinator.com" }}
         validationSchema={validationSchema}
+
+        onSubmit={(values) => {
+            loginMutation.mutate(values);
+          }}
       >
         {({
           handleChange,
