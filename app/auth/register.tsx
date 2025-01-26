@@ -14,6 +14,8 @@ import { StatusBar } from "expo-status-bar"
 import { Formik } from "formik"
 import * as yup from "yup"
 import { useRouter } from "expo-router"
+import { useMutation } from "@tanstack/react-query"
+import { register } from '../(services)/api/api';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("Full Name is required").label("Full Name"),
@@ -36,10 +38,16 @@ const validationSchema = yup.object().shape({
 
 export default function RegisterScreen() {
         const router =useRouter()
-    
-  const handleRegister = (values:any) => {
-    console.log("Register with:", values)
-  }
+        const registerMutation = useMutation(register, {
+            onSuccess: (data) => {
+              console.log("Login Successful:", data);
+              router.push("/(tabs)");
+            },
+            onError: (error:any) => {
+              console.error("Login Error:", error.response?.data || error.message);
+              
+            },
+          });
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
@@ -58,8 +66,9 @@ export default function RegisterScreen() {
             confirmPassword: "",
           }}
           validationSchema={validationSchema}
-          onSubmit={(values) => handleRegister(values)}
-        >
+          onSubmit={(values) => {
+            registerMutation.mutate(values);
+          }}        >
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
             <View style={styles.inputContainer}>
               <TextInput
