@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice, Dispatch } from "@reduxjs/toolkit";
-
+import {User} from  '@/types'
 
 const loadUserFromAsyncStrg = async ()=>{
     try {
@@ -12,12 +12,15 @@ const loadUserFromAsyncStrg = async ()=>{
     }
 }
 
-const initialState = {
-    user:null,
-    token:null,
-    isLoading:true
-}
-
+const initialState: { 
+    user: User | null; 
+    token: string | null; 
+    isLoading: boolean; 
+  } = {
+    user: null,
+    token: null,
+    isLoading: true,
+  };
 
 const authSlice = createSlice({
     name: "auth",

@@ -15,7 +15,7 @@ import { Formik } from "formik"
 import * as yup from "yup"
 import { useRouter } from "expo-router"
 import { useMutation } from "@tanstack/react-query";
-import { login } from '../(services)/api/api';
+import { login } from '../(services)/api/authapi';
 import { useDispatch } from "react-redux"
 import { loginAction } from "../(redux)/authSlice"
 const validationSchema = yup.object().shape({
