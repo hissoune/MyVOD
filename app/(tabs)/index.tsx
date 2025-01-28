@@ -1,18 +1,16 @@
-import React, { useState } from "react"
-import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions, TextInput, Alert } from "react-native"
+import React, { useEffect, useState } from "react"
+import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions, TextInput, Alert, ActivityIndicator } from "react-native"
 import { useRouter } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { useAppDispatch } from "@/hooks/useAppDispatch"
 import { logoutAction } from "../(redux)/authSlice"
+import { useSelector } from "react-redux"
+import { fetchMovies } from "../(redux)/moviesSlice"
+import { RootState } from "../(redux)/store"
+import { replaceIp } from "@/hooks/helpers"
 
-const { width } = Dimensions.get("window")
 
-const movies = [
-  { id: 1, title: "Inception", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
-  { id: 2, title: "The Dark Knight", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
-  { id: 3, title: "Interstellar", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
-  { id: 4, title: "Pulp Fiction", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
-]
+
 
 const sessions = [
   { id: 1, title: "Stranger Things", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
@@ -25,8 +23,14 @@ const categories = ["All", "Action", "Comedy", "Drama", "Sci-Fi"]
 
 export default function LandingPage() {
   const router = useRouter()
-  const [activeCategory, setActiveCategory] = useState("All")
+  const [activeCategory, setActiveCategory] = useState("All");
   const dispatch = useAppDispatch()
+  const { movies, status } = useSelector((state:RootState) => state.movies);
+
+  useEffect(() => {
+    dispatch(fetchMovies());
+  }, [dispatch]);
+
   const handleLogout = () => {
     Alert.alert(
       "Confirm Logout",
@@ -37,21 +41,46 @@ export default function LandingPage() {
       ]
     );
   };
-  const renderContent = (items:any, title:any) => (
+  
+const renderContent = (items: any, title: string, name: string) => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
-        {items.map((item:any) => (
-          <TouchableOpacity key={item.id} style={styles.itemCard}>
-            <Image source={{ uri: item.image }} style={styles.itemImage} />
-            <View style={styles.itemTitleContainer}>
-              <Text style={styles.itemTitle}>{item.title}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.horizontalScroll}
+      >
+        {name === "movies"
+          ? items.map((item: any) => (
+              <TouchableOpacity key={item._id} style={styles.itemCard}>
+                <Image
+                  source={{ uri: replaceIp(item.posterImage, "192.168.8.254") }}
+                  style={styles.itemImage}
+                />
+                <View style={styles.itemTitleContainer}>
+                  <Text style={styles.itemTitle}>{item.title}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          : items.map((item: any) => (
+              <TouchableOpacity key={item.id} style={styles.itemCard}>
+                <Image
+                  source={{ uri: item.image }}
+                  style={styles.itemImage}
+                />
+                <View style={styles.itemTitleContainer}>
+                  <Text style={styles.itemTitle}>{item.title}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
       </ScrollView>
     </View>
-  )
+  );
+  
+
+  if (status == 'loading') {
+    return <ActivityIndicator color={'white'}/>
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -91,8 +120,8 @@ export default function LandingPage() {
         ))}
       </ScrollView>
 
-      {renderContent(movies, "🎬 Popular Movies")}
-      {renderContent(sessions, "📺 Trending Sesions")}
+      {renderContent(movies, "🎬 Popular Movies","movies")}
+      {renderContent(sessions, "📺 Trending Sesions","sessions")}
     </ScrollView>
   )
 }
@@ -209,8 +238,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   itemImage: {
-    width: "100%",
+    width: 200,
     height: 200,
+   
   },
   itemTitleContainer: {
     padding: 10,
