@@ -9,6 +9,9 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import queryClient from './(services)/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
+import AppWrapper from './(redux)/AppWrapper';
+import { Provider } from 'react-redux';
+import  store  from './(redux)/store';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -30,17 +33,14 @@ const [isAuth,setIsAuth] = useState(true)
   }
 
   return (
+    <Provider store={store}>
     <QueryClientProvider client={queryClient}>
        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack >
-        <Stack.Screen  name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <AppWrapper />
       <StatusBar style="auto" />
     </ThemeProvider>
     </QueryClientProvider>
+    </Provider>
    
   );
 }

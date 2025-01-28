@@ -8,6 +8,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native"
 import { StatusBar } from "expo-status-bar"
 import { Formik } from "formik"
@@ -15,6 +16,8 @@ import * as yup from "yup"
 import { useRouter } from "expo-router"
 import { useMutation } from "@tanstack/react-query";
 import { login } from '../(services)/api/api';
+import { useDispatch } from "react-redux"
+import { loginAction } from "../(redux)/authSlice"
 const validationSchema = yup.object().shape({
   email: yup.string().required('Email is required').email('Enter a valid email').label('Email'),
   password: yup.string().required('Password is required').min(4, 'Password must be at least 4 characters').label('Password'),
@@ -22,16 +25,13 @@ const validationSchema = yup.object().shape({
 
 export default function LoginScreen() {
     const router =useRouter()
-
+  const dispatch = useDispatch()
     const loginMutation = useMutation(login, {
         onSuccess: (data) => {
-          console.log("Login Successful:", data);
+            dispatch(loginAction(data))
           router.push("/(tabs)");
         },
-        onError: (error:any) => {
-          console.error("Login Error:", error.response?.data || error.message);
-          
-        },
+       
       });
 
   return (
@@ -41,6 +41,10 @@ export default function LoginScreen() {
         <Image source={require("../../assets/images/7c2d20bbb14eac6d2e02a3360632cb4b.jpg")} style={styles.logo} />
         <Text style={styles.title}>CinemaWorld</Text>
       </View>
+       {loginMutation.isError &&(
+               <Text style={styles.errorText}>invalid Credancials</Text>
+      
+               )}
       <Formik
         initialValues={{ email: "pixes@mailinator.com", password: "pixes@mailinator.com" }}
         validationSchema={validationSchema}
@@ -85,7 +89,10 @@ export default function LoginScreen() {
               <Text style={styles.errorText}>{errors.password}</Text>
             )}
             <TouchableOpacity style={styles.button} onPress={() => handleSubmit()}>
-              <Text style={styles.buttonText}>Login</Text>
+                {loginMutation.isLoading ?(<ActivityIndicator color={'#fff'} />):(
+                <Text style={styles.buttonText}>Login</Text>
+
+                )}
             </TouchableOpacity>
           </View>
         )}

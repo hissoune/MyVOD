@@ -1,7 +1,9 @@
 import React, { useState } from "react"
-import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions, TextInput } from "react-native"
+import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions, TextInput, Alert } from "react-native"
 import { useRouter } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
+import { useAppDispatch } from "@/hooks/useAppDispatch"
+import { logoutAction } from "../(redux)/authSlice"
 
 const { width } = Dimensions.get("window")
 
@@ -24,7 +26,17 @@ const categories = ["All", "Action", "Comedy", "Drama", "Sci-Fi"]
 export default function LandingPage() {
   const router = useRouter()
   const [activeCategory, setActiveCategory] = useState("All")
-
+  const dispatch = useAppDispatch()
+  const handleLogout = () => {
+    Alert.alert(
+      "Confirm Logout",
+      "Are you sure you want to log out?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Logout", onPress: () => dispatch(logoutAction()) }
+      ]
+    );
+  };
   const renderContent = (items:any, title:any) => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -45,8 +57,9 @@ export default function LandingPage() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <TextInput style={styles.searchBar} placeholder="Search movies and series" placeholderTextColor="#999" />
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="options-outline" size={24} color="#fff" />
+        <TouchableOpacity style={styles.iconButton} onPress={handleLogout}>
+          {/* <Ionicons name="options-outline" size={24} color="#fff" /> */}
+          <Text style={styles.itemTitle}>logout</Text>
         </TouchableOpacity>
       </View>
 
@@ -106,12 +119,13 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   iconButton: {
-    width: 40,
+    width: 50,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: "#2a2a2a",
+    borderRadius: 2,
+    backgroundColor: "red",
     justifyContent: "center",
     alignItems: "center",
+    
   },
   featuredContent: {
     height: 250,

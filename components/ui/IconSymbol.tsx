@@ -8,6 +8,7 @@ import { OpaqueColorValue, StyleProp, ViewStyle } from 'react-native';
 const MAPPING = {
   'house.fill': 'home',
   'local-movies': 'movie',
+  'exit-to-app': 'logout',
   'movies': 'local-movies',
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',

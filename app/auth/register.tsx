@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from "react-native"
 import { StatusBar } from "expo-status-bar"
 import { Formik } from "formik"
@@ -57,7 +58,7 @@ export default function RegisterScreen() {
           <Image source={require("../../assets/images/7c2d20bbb14eac6d2e02a3360632cb4b.jpg")} style={styles.logo} />
           <Text style={styles.title}>Join CinemaWorld</Text>
         </View>
-
+        
         <Formik
           initialValues={{
             name: "",
@@ -118,7 +119,10 @@ export default function RegisterScreen() {
               )}
 
               <TouchableOpacity style={styles.button} onPress={()=>handleSubmit()}>
-                <Text style={styles.buttonText}>Register</Text>
+               {registerMutation.isLoading ?(<ActivityIndicator color={'#fff'} />):(
+                               <Text style={styles.buttonText}>Register</Text>
+               
+                               )}
               </TouchableOpacity>
               
             </View>
