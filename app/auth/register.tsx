@@ -16,7 +16,7 @@ import { Formik } from "formik"
 import * as yup from "yup"
 import { useRouter } from "expo-router"
 import { useMutation } from "@tanstack/react-query"
-import { register } from '../(services)/api/api';
+import { register } from '../(services)/api/authapi';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("Full Name is required").label("Full Name"),
