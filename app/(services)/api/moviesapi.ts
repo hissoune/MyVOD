@@ -1,12 +1,20 @@
 import axios from "axios";
+import axiosInstance from "./Client";
 
 
 const getMovies = async () =>{
 
 
-    const response = await axios.get(`http://192.168.8.254:8000/api/public/movies`);
+    const response = await axiosInstance.get(`public/movies`);
     return response.data;
 
+};
+
+const AddToFavorite = async (movieId:string)=>{
+
+    const response = await axiosInstance.put(`auth/profile/favorites/${movieId}`);
+    
+    return response.data;
 }
 
 
@@ -14,4 +22,4 @@ const getMovies = async () =>{
 
 
 
-    export {getMovies }
+    export {getMovies,AddToFavorite }
