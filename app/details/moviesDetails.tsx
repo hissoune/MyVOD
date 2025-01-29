@@ -64,7 +64,10 @@ const dispatch = useAppDispatch()
     const movieData = encodeURIComponent(JSON.stringify(item));
     router.push(`/details/watchMovie?movie=${movieData}`);  
   };
-
+  const handlePressReservation = (item:any) => {
+    const movieData = encodeURIComponent(JSON.stringify(item));
+    router.push(`/details/reserveSeate?movie=${movieData}`);  
+  };
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image source={{ uri: replaceIp(movieObject.posterImage, '192.168.8.254') }} style={styles.posterImage} />
@@ -122,7 +125,7 @@ const dispatch = useAppDispatch()
           <TouchableOpacity style={styles.watchButton} onPress={()=>handlePress(movieObject)}>
             <Text style={styles.buttonText}>Watch Movie</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.reserveButton}>
+          <TouchableOpacity style={styles.reserveButton} onPress={()=>{handlePressReservation(movieObject)}}>
             <Text style={styles.buttonText}>Reserve Seat</Text>
           </TouchableOpacity>
         </View>
