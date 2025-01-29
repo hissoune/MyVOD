@@ -1,10 +1,10 @@
-import axios from "axios";
+import axiosInstance from "./Client";
 
 
 const login = async ({email,password}:{email:string,password:string}) =>{
 
 
-    const response = await axios.post(`http://192.168.8.254:8000/api/auth/login`,{
+    const response = await axiosInstance.post(`auth/login`,{
         email,
         password
     });
@@ -17,7 +17,7 @@ const login = async ({email,password}:{email:string,password:string}) =>{
 const register = async ({name,email,password}:{name:string,email:string,password:string}) =>{
 
 
-        const response = await axios.post(`http://192.168.8.254:8000/api/auth/register`,{
+        const response = await axiosInstance.post(`auth/register`,{
             name,
             email,
             password
