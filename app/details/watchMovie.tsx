@@ -1,30 +1,46 @@
 import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Video } from 'expo-av';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { replaceIp } from '@/hooks/helpers';
-import { array } from 'yup';
 
 const WatchMovie = () => {
     const { movie } = useLocalSearchParams();
     const movieObject = movie ? JSON.parse(decodeURIComponent(movie as string)) : null;
-    const videoRef = useRef(null);
+    const videoRef = useRef<Video | null>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
 
     if (!movieObject || !movieObject.videoUrl) {
-        return <View style={styles.container}><Text style={styles.errorText}>No video available</Text></View>;
+        return (
+            <View style={styles.container}>
+                <Text style={styles.errorText}>No video available</Text>
+            </View>
+        );
     }
+
+    const togglePlayback = async () => {
+        if (videoRef.current) {
+            if (isPlaying) {
+                await videoRef.current.pauseAsync();
+            } else {
+                await videoRef.current.playAsync();
+            }
+            setIsPlaying(!isPlaying);
+        }
+    };
 
     return (
         <View style={styles.container}>
             <Video
                 ref={videoRef}
-                source={{ uri:replaceIp(movieObject.videoUrl, '192.168.8.254') }}
+                source={{ uri: replaceIp(movieObject.videoUrl, '192.168.8.254') }}
                 style={styles.video}
-                resizeMode='contain'
+                resizeMode="contain"
                 useNativeControls
-                shouldPlay
-                
             />
+            <TouchableOpacity onPress={togglePlayback} style={styles.button}>
+                <Text style={styles.buttonText}>{isPlaying ? 'Pause' : 'Play'}</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -39,6 +55,17 @@ const styles = StyleSheet.create({
     video: {
         width: '100%',
         height: 300,
+    },
+    button: {
+        marginTop: 20,
+        padding: 10,
+        backgroundColor: '#1DB954',
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     errorText: {
         color: '#fff',
