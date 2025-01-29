@@ -5,7 +5,7 @@ import { RootState } from '../(redux)/store';
 import { User } from '@/types';
 
 const Profile = () => {
-    const  {user}  = useSelector((state: RootState) => state.auth.user);
+    const  {user}  = useSelector((state: RootState) => state.auth);
    
   if (!user) {
     return (
