@@ -3,11 +3,17 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput 
 import { useLocalSearchParams } from 'expo-router';
 import { replaceIp } from '@/hooks/helpers';
 import { AirbnbRating } from 'react-native-ratings';
+import { useSelector } from 'react-redux';
+import { RootState } from '../(redux)/store';
+import { useAppDispatch } from '@/hooks/useAppDispatch';
+import { addFavorite } from '../(redux)/authSlice';
 
 const MoviesDetails = () => {
   const { movie } = useLocalSearchParams();
   const movieObject = movie ? JSON.parse(decodeURIComponent(movie as string)) : null;
+const {user}=useSelector((state:RootState)=>state.auth)
 
+const dispatch = useAppDispatch()
   const [comments, setComments] = useState('');
   const [commentList, setCommentList] = useState([
     'Great movie!',
@@ -24,6 +30,11 @@ const MoviesDetails = () => {
 
   if (!movieObject) {
     return <Text>Loading...</Text>;
+  }
+
+  const addToFavorite = async (movieId:string)=>{
+    
+       await dispatch(addFavorite(movieId))
   }
 
   return (
@@ -44,17 +55,25 @@ const MoviesDetails = () => {
           <Text style={styles.ratingLabel}>Rating:</Text>
           <AirbnbRating
             count={5}
-            defaultRating={movieObject.rating || 0}
+            defaultRating={movieObject.averageRating || 0}
             size={30}
-            showRating={false}
-            isDisabled
+            showRating={true}
+            
             starContainerStyle={styles.starContainer}
           />
         </View>
-
-        <TouchableOpacity style={styles.favoriteButton}>
+        {user?.favorites?.includes(movieObject._id)?(
+            <TouchableOpacity style={styles.favoriteButton} onPress={()=>addToFavorite(movieObject._id)}>
+          <Text style={styles.favoriteText}>dont to Favorites</Text>
+        </TouchableOpacity>
+        ):(
+            <TouchableOpacity style={styles.favoriteButton} onPress={()=>addToFavorite(movieObject._id)}>
           <Text style={styles.favoriteText}>Add to Favorites</Text>
         </TouchableOpacity>
+        )
+
+        }
+        
 
         <View style={styles.actionButtons}>
           <TouchableOpacity style={styles.watchButton}>
