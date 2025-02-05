@@ -1,10 +1,9 @@
 import { RootState } from '@/app/(redux)/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.8.254:8000/api/',
+  baseURL: process.env.EXPO_PUBLIC_APPURL,
 });
 axiosInstance.interceptors.request.use(
  async function (config) {
