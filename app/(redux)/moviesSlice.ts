@@ -6,6 +6,8 @@ export interface Movie {
   title: string;
   description: string;
   releaseDate: string;
+  duration:number;
+  posterImage:string
 }
 
 interface MoviesState {
