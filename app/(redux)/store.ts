@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { authReducer } from "./authSlice";
 import { moviesReducer } from "./moviesSlice";
 import { sessionsReducer } from "./sessionsSlice";
+import { ReservationSliceReducer } from "./reservationSlice";
 
  const store = configureStore({
     reducer:{
             auth:authReducer,
             movies: moviesReducer,
-            sessions:sessionsReducer
+            sessions:sessionsReducer,
+            reservations:ReservationSliceReducer
 
     }
 });
