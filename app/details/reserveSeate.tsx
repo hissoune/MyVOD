@@ -48,7 +48,7 @@ const router = useRouter()
     const handleReserveSeat = (session:any) => {
         const sessionData = encodeURIComponent(JSON.stringify(session));
 
-        router.push(`/details/selectSeat?session=${sessionData}`);  
+        router.push(`/details/selectSeat?sessiondata=${sessionData}`);  
     };
 
     return (
@@ -56,7 +56,7 @@ const router = useRouter()
             <Text style={styles.title}>Available Sessions:</Text>
             <FlatList
                 data={sessions}
-                keyExtractor={(item) => item._id}
+                keyExtractor={(item) => item._id.toString()}
                 renderItem={({ item }) => (
                     <View style={styles.sessionCard}>
                         <Text style={styles.sessionText}>📅 Date: {new Date(item.dateTime).toLocaleString()}</Text>
