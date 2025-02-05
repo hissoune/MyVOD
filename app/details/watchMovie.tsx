@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Video } from 'expo-av';
+import { Video ,ResizeMode} from 'expo-av';
 import { useRef, useState } from 'react';
 import { replaceIp } from '@/hooks/helpers';
 
@@ -33,9 +33,9 @@ const WatchMovie = () => {
         <View style={styles.container}>
             <Video
                 ref={videoRef}
-                source={{ uri: replaceIp(movieObject.videoUrl, '192.168.8.254') }}
+                source={{ uri: replaceIp(movieObject.videoUrl, '192.168.8.235') }}
                 style={styles.video}
-                resizeMode="contain"
+                resizeMode={ResizeMode.CONTAIN}
                 useNativeControls
             />
             <TouchableOpacity onPress={togglePlayback} style={styles.button}>
