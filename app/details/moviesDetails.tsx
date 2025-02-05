@@ -70,7 +70,7 @@ const dispatch = useAppDispatch()
   };
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={{ uri: replaceIp(movieObject.posterImage, '192.168.8.254') }} style={styles.posterImage} />
+      <Image source={{ uri: replaceIp(movieObject.posterImage, '192.168.8.235') }} style={styles.posterImage} />
       
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{movieObject.title}</Text>
