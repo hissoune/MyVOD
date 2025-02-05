@@ -40,7 +40,7 @@ const router = useRouter()
   const renderMovieCard = ({ item }: { item: any }) => (
     <TouchableOpacity key={item._id} style={styles.cardContainer} onPress={()=>handlePress(item)}>
       <Image
-        source={{ uri: replaceIp(item.posterImage, '192.168.8.254') }}
+        source={{ uri: replaceIp(item.posterImage, '192.168.8.235') }}
         style={styles.movieImage}
       />
       <View style={styles.movieInfoContainer}>

@@ -1,20 +1,57 @@
+import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import {createReservation, updateSession} from '@/app/(redux)/sessionsSlice'
+import { useSelector } from 'react-redux';
+import { RootState } from '../(redux)/store';
+const SelectSeat = () => {    
+    const { sessiondata } = useLocalSearchParams();
 
-const SelectSeat = () => {
-    const { session } = useLocalSearchParams();
-    const sessionObject = session ? JSON.parse(decodeURIComponent(session as string)) : null;
+  const sessionObject = sessiondata ? JSON.parse(decodeURIComponent(sessiondata as string)):null
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
+  const dispatch = useAppDispatch()
+  const {session } = useSelector((state:RootState)=>state.sessions)
 
-    const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
+  useEffect(()=>{
+    dispatch(updateSession(sessionObject))
+  },[dispatch])
 
-    
+const handelReservation =async (session:string,seats:number | null )=>{
+ 
+    if (!seats) {
+        Alert.alert("Error", "Please select a seat before reserving.");
+        return;
+    }
+    try {
+     const response = await dispatch(createReservation({session,seats}))
+     if (response) {
 
+        
+      
+        Alert.alert(
+            "Reservation Successful",
+            `Your seat ${seats} has been reserved successfully!`,
+            [{ text: "OK", onPress: () => console.log("OK Pressed") }]
+        );
+     }else{
+        Alert.alert(
+            "failed",
+         
+        );
+     }
+  
+} catch (error) {
+    Alert.alert("Reservation Failed", "Something went wrong. Please try again.");
+}
+
+}
     const handleSelectSeat = (seatNumber: number) => {
         setSelectedSeat(seatNumber);
+        
     };
 
-    if (!sessionObject) {
+    if (!session) {
         return (
             <View style={styles.container}>
                 <Text style={styles.errorText}>No session details available</Text>
@@ -25,15 +62,15 @@ const SelectSeat = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Session Details</Text>
-            <Text style={styles.sessionText}>📅 Date: {new Date(sessionObject.dateTime).toLocaleString()}</Text>
-            <Text style={styles.sessionText}>🎬 Movie: {sessionObject.movie.title}</Text>
-            <Text style={styles.sessionText}>🏠 Room: {sessionObject.room.name}</Text>
-            <Text style={styles.sessionText}>💰 Price: ${sessionObject.price}</Text>
+            <Text style={styles.sessionText}>📅 Date: {new Date(session.dateTime).toLocaleString()}</Text>
+            <Text style={styles.sessionText}>🎬 Movie: {session.movie.title}</Text>
+            <Text style={styles.sessionText}>🏠 Room: {session.room.name}</Text>
+            <Text style={styles.sessionText}>💰 Price: ${session.price}</Text>
 
             <Text style={styles.title}>Select Your Seat</Text>
             <ScrollView >
                 <View style={styles.seatContainer}>
-                {sessionObject.seats.map((seat:any, index:any) => (
+                {session.seats.map((seat:any, index:any) => (
                     <TouchableOpacity
                         key={index}
                         style={[
@@ -46,6 +83,11 @@ const SelectSeat = () => {
                         <Text style={styles.seatText}>{seat.number}</Text>
                     </TouchableOpacity>
                 ))}
+                </View>
+                <View>
+                    <TouchableOpacity style={styles.reserveButton} onPress={()=>handelReservation(session._id.toString(),selectedSeat)}>
+                        <Text style={styles.reserveButtonText}> Reserve Now </Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
             {selectedSeat && (
@@ -89,14 +131,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     availableSeat: {
-        backgroundColor: '#28a745', // Green for available
+        backgroundColor: '#28a745', 
     },
     unavailableSeat: {
-        backgroundColor: '#dc3545', // Red for unavailable
+        backgroundColor: '#dc3545', 
     },
     selectedSeat: {
         borderWidth: 2,
-        borderColor: '#ffc107', // Yellow border when selected
+        borderColor: '#ffc107', 
     },
     seatText: {
         color: '#fff',
@@ -107,6 +149,18 @@ const styles = StyleSheet.create({
         color: '#ffc107',
         fontSize: 18,
         marginTop: 20,
+    },
+    reserveButton: {
+        marginTop: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: '#ff6f00',
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    reserveButtonText: {
+        color: '#fff',
+        fontSize: 16,
     },
     errorText: {
         color: 'red',
