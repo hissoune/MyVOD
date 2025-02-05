@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, RefreshControl } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, RefreshControl, TextInput, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { fetchMovies } from '../(redux)/moviesSlice';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { replaceIp } from '@/hooks/helpers';
 import { RootState } from '../(redux)/store';
 import { useRouter } from 'expo-router';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const Movies = () => {
   const dispatch = useAppDispatch();
@@ -15,6 +16,8 @@ const router = useRouter()
   const [visibleMovies, setVisibleMovies] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
+  const [activeCategory, setActiveCategory] = useState("All");
+  const categories = ["All", "Action", "Comedy", "Drama", "Sci-Fi"]
 
   useEffect(() => {
     dispatch(fetchMovies());
@@ -73,7 +76,26 @@ const router = useRouter()
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+      <FontAwesome name="search" size={24} color="#fff" />
+        <TextInput style={styles.searchBar} placeholder="Search movies and series" placeholderTextColor="#999" />
+       
+      </View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesContainer}>
+  {categories.map((category) => (
+    <TouchableOpacity
+      key={category}
+      style={[styles.categoryButton, activeCategory === category && styles.activeCategoryButton]}
+      onPress={() => setActiveCategory(category)}
+    >
+      <Text style={[styles.categoryButtonText, activeCategory === category && styles.activeCategoryButtonText]}>
+      {category}
+      </Text>
+    </TouchableOpacity>
+  ))}
+</ScrollView>
+
       {status === 'loading' && visibleMovies.length === 0 ? (
         <Text style={styles.loadingText}>Loading Movies...</Text>
       ) : (
@@ -92,7 +114,7 @@ const router = useRouter()
           ListFooterComponent={renderFooter()}
         />
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -101,6 +123,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121212',
     padding: 10,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  
+    paddingBottom: 20,
+  },
+  searchBar: {
+    flex: 1,
+    height: 40,
+    backgroundColor: "#2a2a2a",
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    color: "#fff",
+    marginRight: 10,
+    marginLeft: 10,
   },
   row: {
     justifyContent: 'space-between',
@@ -161,6 +200,55 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 15,
   },
+  itemTitle: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+
+iconButton: {
+  width: 50,
+  height: 40,
+  borderRadius: 2,
+  backgroundColor: "red",
+  justifyContent: "center",
+  alignItems: "center",
+  
+},
+categoriesContainer: {
+  paddingHorizontal: 10,
+  paddingBottom: 15,
+  flexDirection: "row",   
+  alignItems: "center",  
+  marginTop: 20,  
+},
+
+categoryButton: {
+  paddingHorizontal: 15,
+  paddingVertical: 8,
+  borderRadius: 20,
+  borderWidth: 1,
+  borderColor: "#fff",
+  marginRight: 10, 
+},
+
+categoryButtonText: {
+  color: "#fff",       
+  fontWeight:"bold",
+  fontSize: 14,
+},
+
+activeCategoryButton: {
+  backgroundColor: "#fff",  
+  borderColor: "#fff",
+},
+
+activeCategoryButtonText: {
+  color: "#000",      
+  fontWeight: "bold",
+},
+
 });
 
 export default Movies;
