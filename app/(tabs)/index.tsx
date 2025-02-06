@@ -8,8 +8,7 @@ import { useSelector } from "react-redux"
 import { fetchMovies } from "../(redux)/moviesSlice"
 import { RootState } from "../(redux)/store"
 import { replaceIp } from "@/hooks/helpers"
-
-
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 
 const sessions = [
@@ -19,14 +18,16 @@ const sessions = [
   { id: 4, title: "Game of Thrones", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
 ]
 
-const categories = ["All", "Action", "Comedy", "Drama", "Sci-Fi"]
 
 export default function LandingPage() {
   const router = useRouter()
   const [activeCategory, setActiveCategory] = useState("All");
   const dispatch = useAppDispatch()
   const { movies, status } = useSelector((state:RootState) => state.movies);
-
+  const latestMovie = movies && movies.length > 0 
+  ? [...movies].sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())[0] 
+  : null;
+  
   useEffect(() => {
     dispatch(fetchMovies());
   }, [dispatch]);
@@ -41,7 +42,11 @@ export default function LandingPage() {
       ]
     );
   };
-  
+  const handlePress = (item:any) => {
+    const movieData = encodeURIComponent(JSON.stringify(item));
+    router.push(`/details/moviesDetails?movie=${movieData}`);  
+  };
+
 const renderContent = (items: any, title: string, name: string) => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -54,7 +59,7 @@ const renderContent = (items: any, title: string, name: string) => (
           ? items.map((item: any) => (
               <TouchableOpacity key={item._id} style={styles.itemCard}>
                 <Image
-                  source={{ uri: replaceIp(item.posterImage, "192.168.8.254") }}
+                  source={{ uri: replaceIp(item.posterImage,  `${process.env.EXPO_PUBLIC_REPLACE}`) }}
                   style={styles.itemImage}
                 />
                 <View style={styles.itemTitleContainer}>
@@ -85,40 +90,35 @@ const renderContent = (items: any, title: string, name: string) => (
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TextInput style={styles.searchBar} placeholder="Search movies and series" placeholderTextColor="#999" />
         <TouchableOpacity style={styles.iconButton} onPress={handleLogout}>
-          {/* <Ionicons name="options-outline" size={24} color="#fff" /> */}
-          <Text style={styles.itemTitle}>logout</Text>
+        <AntDesign name="logout" size={24} color="#fff" />
+                  {/* <Text style={styles.itemTitle}>logout</Text> */}
         </TouchableOpacity>
       </View>
 
       <View style={styles.featuredContent}>
-        <Image
-          source={{ uri: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" }}
-          style={styles.featuredImage}
-        />
-        <View style={styles.featuredOverlay}>
-          <Text style={styles.featuredTitle}>Featured: The Mandalorian</Text>
-          <TouchableOpacity style={styles.playButton}>
-            <Ionicons name="play" size={24} color="#000" />
-            <Text style={styles.playButtonText}>Play</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+  {latestMovie ? (
+    <>
+      <Image
+        source={{ uri: replaceIp(latestMovie.posterImage, '192.168.8.235') }}
+        style={styles.featuredImage}
+      />
+      <View style={styles.featuredOverlay}>
+        <Text style={styles.featuredTitle}>{latestMovie.title}</Text>
+        <Text style={styles.featuredTitle}>{latestMovie.duration} min</Text>
+        <TouchableOpacity style={styles.playButton} onPress={()=>handlePress(latestMovie)}>
+          <Ionicons name="play" size={24} color="#000" />
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesContainer}>
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={[styles.categoryButton, activeCategory === category && styles.activeCategoryButton]}
-            onPress={() => setActiveCategory(category)}
-          >
-            <Text style={[styles.categoryButtonText, activeCategory === category && styles.activeCategoryButtonText]}>
-              {category}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+          <Text style={styles.playButtonText}>show details</Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  ) : (
+    <ActivityIndicator size="large" color="white" />
+  )}
+</View>
+
+      
 
       {renderContent(movies, "🎬 Popular Movies","movies")}
       {renderContent(sessions, "📺 Trending Sesions","sessions")}

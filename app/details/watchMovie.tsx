@@ -33,7 +33,7 @@ const WatchMovie = () => {
         <View style={styles.container}>
             <Video
                 ref={videoRef}
-                source={{ uri: replaceIp(movieObject.videoUrl, '192.168.8.235') }}
+                source={{ uri: replaceIp(movieObject.videoUrl,  `${process.env.EXPO_PUBLIC_REPLACE}`) }}
                 style={styles.video}
                 resizeMode={ResizeMode.CONTAIN}
                 useNativeControls

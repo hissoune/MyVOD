@@ -16,10 +16,16 @@ const AddToFavorite = async (movieId:string)=>{
     
     return response.data;
 }
+const addOrUpdateRate = async (movieId:string,rating:number)=>{
+ 
+    
+    const response = await axiosInstance.patch(`/rating`,{movieId,rating});
+    return response.data.movie;
+}
 
 
 
 
 
 
-    export {getMovies,AddToFavorite }
+    export {getMovies,AddToFavorite,addOrUpdateRate }

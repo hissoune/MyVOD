@@ -39,6 +39,8 @@ const authSlice = createSlice({
     loginAction: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
+      console.log(action.payload.token);
+      
       state.isLoading = false;
       AsyncStorage.setItem("userInfo", JSON.stringify(action.payload.user));
       AsyncStorage.setItem("token", action.payload.token);
