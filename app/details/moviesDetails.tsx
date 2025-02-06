@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../(redux)/store';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { addFavorite } from '../(redux)/authSlice';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const MoviesDetails = () => {
   const { movie } = useLocalSearchParams();
@@ -70,7 +71,7 @@ const dispatch = useAppDispatch()
   };
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={{ uri: replaceIp(movieObject.posterImage, '192.168.8.235') }} style={styles.posterImage} />
+      <Image source={{ uri: replaceIp(movieObject.posterImage,  `${process.env.EXPO_PUBLIC_REPLACE}`) }} style={styles.posterImage} />
       
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{movieObject.title}</Text>
@@ -110,12 +111,12 @@ const dispatch = useAppDispatch()
 
         {user?.favorites?.includes(movieObject._id)?(
             <TouchableOpacity style={styles.favoriteButton} onPress={()=>addToFavorite(movieObject._id)}>
-          <Text style={styles.favoriteText}>dont to Favorites</Text>
+           <MaterialIcons name="favorite" size={32} color="red" />
         </TouchableOpacity>
         ):(
             <TouchableOpacity style={styles.favoriteButton} onPress={()=>addToFavorite(movieObject._id)}>
-          <Text style={styles.favoriteText}>Add to Favorites</Text>
-        </TouchableOpacity>
+          <MaterialIcons name="favorite-border" size={32} color="white" />
+             </TouchableOpacity>
         )
 
         }
@@ -204,17 +205,22 @@ const styles = StyleSheet.create({
   ratingLabel: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#f1c40f', // Gold color for the label
+    color: '#f1c40f', 
   },
   starContainer: {
     marginVertical: 10,
   },
   favoriteButton: {
-    backgroundColor: '#e50914',
-    borderRadius: 5,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginBottom: 15,
+    paddingHorizontal: 2,
+    paddingVertical: 4,
+    borderRadius: 20,
+    borderWidth: 0.5,
+    borderColor: "#fff",
+    marginVertical:10,
+    flex:1,
+    justifyContent:"center",
+    alignItems:"center"
+    
   },
   favoriteText: {
     color: '#fff',
