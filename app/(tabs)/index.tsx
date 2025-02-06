@@ -18,7 +18,6 @@ const sessions = [
   { id: 4, title: "Game of Thrones", image: "https://i.pinimg.com/736x/7c/bf/f8/7cbff88448f4c039850e5604fd36d08e.jpg" },
 ]
 
-const categories = ["All", "Action", "Comedy", "Drama", "Sci-Fi"]
 
 export default function LandingPage() {
   const router = useRouter()
@@ -60,7 +59,7 @@ const renderContent = (items: any, title: string, name: string) => (
           ? items.map((item: any) => (
               <TouchableOpacity key={item._id} style={styles.itemCard}>
                 <Image
-                  source={{ uri: replaceIp(item.posterImage, "192.168.8.235") }}
+                  source={{ uri: replaceIp(item.posterImage,  `${process.env.EXPO_PUBLIC_REPLACE}`) }}
                   style={styles.itemImage}
                 />
                 <View style={styles.itemTitleContainer}>
@@ -119,19 +118,7 @@ const renderContent = (items: any, title: string, name: string) => (
   )}
 </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesContainer}>
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={[styles.categoryButton, activeCategory === category && styles.activeCategoryButton]}
-            onPress={() => setActiveCategory(category)}
-          >
-            <Text style={[styles.categoryButtonText, activeCategory === category && styles.activeCategoryButtonText]}>
-              {category}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      
 
       {renderContent(movies, "🎬 Popular Movies","movies")}
       {renderContent(sessions, "📺 Trending Sesions","sessions")}
