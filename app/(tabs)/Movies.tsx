@@ -48,7 +48,7 @@ const Movies = () => {
 
   const handlePress = (item: any) => {
     const movieData = encodeURIComponent(JSON.stringify(item));
-    router.push(`/details/moviesDetails?movie=${movieData}`);
+    router.push(`/details/moviesDetails?movieData=${movieData}`);
   };
 
   const renderMovieCard = ({ item }: { item: any }) => (
