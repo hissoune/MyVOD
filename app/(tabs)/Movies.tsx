@@ -12,38 +12,49 @@ const Movies = () => {
   const dispatch = useAppDispatch();
   const { movies, status } = useSelector((state: RootState) => state.movies);
   const [refreshing, setRefreshing] = useState(false);
-const router = useRouter()
-  const [visibleMovies, setVisibleMovies] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
+  const [visibleMovies, setVisibleMovies] = useState<any[]>([]);
   const [activeCategory, setActiveCategory] = useState("All");
-  const categories = ["All", "Action", "Comedy", "Drama", "Sci-Fi"]
+  const categories = ["All", "Action", "Comedy", "Drama", "Sci-Fi"];
+  const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    dispatch(fetchMovies());
-  }, [dispatch]);
+  const router = useRouter();
 
-  useEffect(() => {
-    if (movies.length) {
-      setVisibleMovies(movies.slice(0, page * ITEMS_PER_PAGE));
+  const filterMovies = (movies: any[]) => {
+    if (searchQuery) {
+      return movies.filter((movie: any) =>
+      movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    }else {
+      return movies
     }
-  }, [movies, page]);
+    
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    const filteredMovies = filterMovies(movies);
+    setVisibleMovies(filteredMovies.slice(0, page * ITEMS_PER_PAGE));
+  };
 
   const loadMoreMovies = () => {
     if (visibleMovies.length < movies.length) {
+      const nextPageMovies = filterMovies(movies.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE));
       setPage((prevPage) => prevPage + 1);
+      setVisibleMovies((prevMovies) => [...prevMovies, ...nextPageMovies]);
     }
   };
 
-  const handlePress = (item:any) => {
+  const handlePress = (item: any) => {
     const movieData = encodeURIComponent(JSON.stringify(item));
-    router.push(`/details/moviesDetails?movie=${movieData}`);  
+    router.push(`/details/moviesDetails?movie=${movieData}`);
   };
 
   const renderMovieCard = ({ item }: { item: any }) => (
-    <TouchableOpacity key={item._id} style={styles.cardContainer} onPress={()=>handlePress(item)}>
+    <TouchableOpacity key={item._id} style={styles.cardContainer} onPress={() => handlePress(item)}>
       <Image
-        source={{ uri: replaceIp(item.posterImage, '192.168.8.235') }}
+        source={{ uri: replaceIp(item.posterImage, `${process.env.EXPO_PUBLIC_REPLACE}`) }}
         style={styles.movieImage}
       />
       <View style={styles.movieInfoContainer}>
@@ -71,30 +82,50 @@ const router = useRouter()
   const onRefresh = () => {
     setRefreshing(true);
     dispatch(fetchMovies())
-      .then(() => setRefreshing(false)) 
+      .then(() => {
+        setRefreshing(false);
+        handleSearch(searchQuery); 
+      })
       .catch(() => setRefreshing(false));
   };
 
+  useEffect(() => {
+    dispatch(fetchMovies());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const filteredMovies = filterMovies(movies);
+    setVisibleMovies(filteredMovies.slice(0, page * ITEMS_PER_PAGE)); 
+  }, [movies]);
+
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
-      <FontAwesome name="search" size={24} color="#fff" />
-        <TextInput style={styles.searchBar} placeholder="Search movies and series" placeholderTextColor="#999" />
-       
+        <FontAwesome name="search" size={24} color="#fff" />
+        <TextInput 
+          style={styles.searchBar} 
+          placeholder="Search movies and series" 
+          placeholderTextColor="#999" 
+          value={searchQuery}
+          onChangeText={handleSearch} 
+        />
       </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesContainer}>
-  {categories.map((category) => (
-    <TouchableOpacity
-      key={category}
-      style={[styles.categoryButton, activeCategory === category && styles.activeCategoryButton]}
-      onPress={() => setActiveCategory(category)}
-    >
-      <Text style={[styles.categoryButtonText, activeCategory === category && styles.activeCategoryButtonText]}>
-      {category}
-      </Text>
-    </TouchableOpacity>
-  ))}
-</ScrollView>
+
+     <View>
+     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesContainer}>
+        {categories.map((category) => (
+          <TouchableOpacity
+            key={category}
+            style={[styles.categoryButton, activeCategory === category && styles.activeCategoryButton]}
+            onPress={() => setActiveCategory(category)}
+          >
+            <Text style={[styles.categoryButtonText, activeCategory === category && styles.activeCategoryButtonText]}>
+              {category}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+     </View>
 
       {status === 'loading' && visibleMovies.length === 0 ? (
         <Text style={styles.loadingText}>Loading Movies...</Text>
@@ -109,12 +140,12 @@ const router = useRouter()
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          onEndReached={loadMoreMovies} 
+          onEndReached={loadMoreMovies}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter()}
         />
       )}
-    </ScrollView>
+    </View>
   );
 };
 
@@ -128,7 +159,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-  
     paddingBottom: 20,
   },
   searchBar: {
@@ -207,48 +237,46 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-iconButton: {
-  width: 50,
-  height: 40,
-  borderRadius: 2,
-  backgroundColor: "red",
-  justifyContent: "center",
-  alignItems: "center",
-  
-},
-categoriesContainer: {
-  paddingHorizontal: 10,
-  paddingBottom: 15,
-  flexDirection: "row",   
-  alignItems: "center",  
-  marginTop: 20,  
-},
+  iconButton: {
+    width: 50,
+    height: 40,
+    borderRadius: 2,
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  categoriesContainer: {
+    paddingHorizontal: 10,
+    paddingBottom: 15,
+    flexDirection: "row",   
+    alignItems: "center",  
+    marginTop: 20,  
+  },
 
-categoryButton: {
-  paddingHorizontal: 15,
-  paddingVertical: 8,
-  borderRadius: 20,
-  borderWidth: 1,
-  borderColor: "#fff",
-  marginRight: 10, 
-},
+  categoryButton: {
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+    marginRight: 10, 
+  },
 
-categoryButtonText: {
-  color: "#fff",       
-  fontWeight:"bold",
-  fontSize: 14,
-},
+  categoryButtonText: {
+    color: "#fff",       
+    fontWeight:"bold",
+    fontSize: 14,
+  },
 
-activeCategoryButton: {
-  backgroundColor: "#fff",  
-  borderColor: "#fff",
-},
+  activeCategoryButton: {
+    backgroundColor: "#fff",  
+    borderColor: "#fff",
+  },
 
-activeCategoryButtonText: {
-  color: "#000",      
-  fontWeight: "bold",
-},
-
+  activeCategoryButtonText: {
+    color: "#000",      
+    fontWeight: "bold",
+  },
 });
 
 export default Movies;
