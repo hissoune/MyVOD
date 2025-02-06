@@ -8,16 +8,33 @@ import { RootState } from '../(redux)/store';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { addFavorite } from '../(redux)/authSlice';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { rateMmovie, updateMovie } from '../(redux)/moviesSlice';
 
 const MoviesDetails = () => {
-  const { movie } = useLocalSearchParams();
-  const movieObject = movie ? JSON.parse(decodeURIComponent(movie as string)) : null;
-  const [userRating, setUserRating] = useState(0);
+  const { movieData } = useLocalSearchParams();
+  const movieObject = movieData ? JSON.parse(decodeURIComponent(movieData as string)) : null;
 const router = useRouter()
-
-const {user}=useSelector((state:RootState)=>state.auth)
-
 const dispatch = useAppDispatch()
+
+
+const {movie}=useSelector((state:RootState)=>state.movies)
+const {user}=useSelector((state:RootState)=>state.auth)
+const [userRating, setUserRating] = useState(0);
+
+useEffect(()=>{
+  if(!movie || movie._id != movieObject._id){
+    dispatch(updateMovie(movieObject))
+}
+},[dispatch,movieObject])
+
+useEffect(()=>{
+  
+  const ret =movie?.ratings.filter((rate:any) => rate.userId === user?._id)[0]?.rating|| 0;
+
+  setUserRating(ret)  
+
+},[movie, user ]); 
+
   const [comments, setComments] = useState('');
   const [commentList, setCommentList] = useState([
     'Great movie!',
@@ -32,27 +49,22 @@ const dispatch = useAppDispatch()
     }
   };
 
-  if (!movieObject) {
+  if (!movie) {
     return <Text>Loading...</Text>;
   }
 
-  useEffect(()=>{
-   const userRate =  (movieObject.ratings).filter((rate:{userId:string,rating:number})=>rate.userId ==user?._id )
-   
-   if (userRate) {
-    setUserRating(userRate[0]?.rating)
-   }
-  },[userRating])
+ 
 
  
   const addToFavorite = async (movieId:string)=>{
     
        await dispatch(addFavorite(movieId))
   }
-  const submitRating = async () => {
-    if (userRating > 0) {
+  const submitRating = async (movieId:string,rating:number) => {
+
+    if (rating > 0) {
       try {
-       
+      await dispatch(rateMmovie({movieId,rating}))
         alert("Rating submitted successfully!");
       } catch (error) {
         alert("Failed to submit rating");
@@ -71,23 +83,23 @@ const dispatch = useAppDispatch()
   };
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={{ uri: replaceIp(movieObject.posterImage,  `${process.env.EXPO_PUBLIC_REPLACE}`) }} style={styles.posterImage} />
+      <Image source={{ uri: replaceIp(movie.posterImage,  `${process.env.EXPO_PUBLIC_REPLACE}`) }} style={styles.posterImage} />
       
       <View style={styles.detailsContainer}>
-        <Text style={styles.title}>{movieObject.title}</Text>
-        <Text style={styles.description}>{movieObject.description}</Text>
+        <Text style={styles.title}>{movie.title}</Text>
+        <Text style={styles.description}>{movie.description}</Text>
         
         <View style={styles.infoContainer}>
-          <Text style={styles.releaseDate}>Release Date: {new Date(movieObject.releaseDate).toLocaleDateString()}</Text>
-          <Text style={styles.genre}>Genres: {movieObject.genre.join(', ')}</Text>
-          <Text style={styles.duration}>Duration: {movieObject.averageRating} minutes</Text>
+          <Text style={styles.releaseDate}>Release Date: {new Date(movie.releaseDate).toLocaleDateString()}</Text>
+          <Text style={styles.genre}>Genres: {movie.genre.join(', ')}</Text>
+          <Text style={styles.duration}>Duration: {movie.averageRating} minutes</Text>
         </View>
 
         <View style={styles.ratingContainer}>
         <Text style={styles.ratingLabel}>Average Rating:</Text>
         <AirbnbRating
             count={5}
-            defaultRating={movieObject.averageRating }
+            defaultRating={movie.averageRating }
             size={30}
             isDisabled={true} 
             showRating={false}
@@ -102,19 +114,19 @@ const dispatch = useAppDispatch()
             size={30}
             defaultRating={userRating}
             showRating={true}
-            onFinishRating={(rating) => setUserRating(rating)} 
+            onFinishRating={(rating)=>setUserRating(rating)}
         />
-        <TouchableOpacity style={styles.submitRatingButton} onPress={submitRating}>
+        <TouchableOpacity style={styles.submitRatingButton} onPress={()=>submitRating(movie._id,userRating)}>
             <Text style={styles.submitRatingText}>Submit Rating</Text>
         </TouchableOpacity>
         </View>
 
-        {user?.favorites?.includes(movieObject._id)?(
-            <TouchableOpacity style={styles.favoriteButton} onPress={()=>addToFavorite(movieObject._id)}>
+        {user?.favorites?.includes(movie._id)?(
+            <TouchableOpacity style={styles.favoriteButton} onPress={()=>addToFavorite(movie._id)}>
            <MaterialIcons name="favorite" size={32} color="red" />
         </TouchableOpacity>
         ):(
-            <TouchableOpacity style={styles.favoriteButton} onPress={()=>addToFavorite(movieObject._id)}>
+            <TouchableOpacity style={styles.favoriteButton} onPress={()=>addToFavorite(movie._id)}>
           <MaterialIcons name="favorite-border" size={32} color="white" />
              </TouchableOpacity>
         )
@@ -123,10 +135,10 @@ const dispatch = useAppDispatch()
         
 
         <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.watchButton} onPress={()=>handlePress(movieObject)}>
+          <TouchableOpacity style={styles.watchButton} onPress={()=>handlePress(movie)}>
             <Text style={styles.buttonText}>Watch Movie</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.reserveButton} onPress={()=>{handlePressReservation(movieObject)}}>
+          <TouchableOpacity style={styles.reserveButton} onPress={()=>{handlePressReservation(movie)}}>
             <Text style={styles.buttonText}>Reserve Seat</Text>
           </TouchableOpacity>
         </View>
