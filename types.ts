@@ -4,4 +4,5 @@ export type User = {
     name:string,
     email:string
     favorites:string[]
+    image:string
 }
