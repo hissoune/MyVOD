@@ -95,7 +95,8 @@ const loadMoreComments = () => {
     router.push(`/details/reserveSeate?movie=${movieData}`);  
   };
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+   
+ <ScrollView  contentContainerStyle={styles.container}>
       <Image source={{ uri: replaceIp(movie.posterImage,  `${process.env.EXPO_PUBLIC_REPLACE}`) }} style={styles.posterImage} />
       
       <View style={styles.detailsContainer}>
@@ -156,7 +157,7 @@ const loadMoreComments = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.commentsSection}>
+   
           
 
           <View style={styles.commentsSection}>
@@ -171,13 +172,14 @@ const loadMoreComments = () => {
           <TouchableOpacity onPress={() => addComment(movie._id, content)} style={styles.addCommentButton}>
             <Text style={styles.addCommentText}>Post Comment</Text>
           </TouchableOpacity>
-
+           
           <FlatList
             data={visibleComments}
             renderItem={({ item }) => <CommentItem commentobj={item} />}
             keyExtractor={(item, index) => index.toString()}
             onEndReached={()=>loadMoreComments}
             onEndReachedThreshold={0.5} 
+            scrollEnabled={false}
             
           />
           {
@@ -193,8 +195,10 @@ const loadMoreComments = () => {
         
         </View>
         </View>
-      </View>
     </ScrollView>
+
+    
+   
   );
 };
 
