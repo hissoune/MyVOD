@@ -14,6 +14,10 @@ import { Provider } from 'react-redux';
 import  store  from './(redux)/store';
 SplashScreen.preventAutoHideAsync();
 
+
+
+
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 

@@ -67,7 +67,7 @@ const styles = {
     backgroundColor: "#f8f9fa",
     borderRadius: 10,
     padding: 10,
-    marginBottom: 8,
+    margin: 8,
     elevation: 2, 
   },
   hoverEffect: {
