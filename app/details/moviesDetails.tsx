@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, FlatList } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { replaceIp } from '@/hooks/helpers';
 import { AirbnbRating } from 'react-native-ratings';
@@ -9,6 +9,8 @@ import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { addFavorite } from '../(redux)/authSlice';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { rateMmovie, updateMovie } from '../(redux)/moviesSlice';
+import { addcomment, getAllComments } from '../(redux)/commentsSlice';
+import CommentItem from '@/components/CommentItem';
 
 const MoviesDetails = () => {
   const { movieData } = useLocalSearchParams();
@@ -19,13 +21,16 @@ const dispatch = useAppDispatch()
 
 const {movie}=useSelector((state:RootState)=>state.movies)
 const {user}=useSelector((state:RootState)=>state.auth)
+const {comments}=useSelector((state:RootState)=>state.comments)
 const [userRating, setUserRating] = useState(0);
-
+const [visibleComments, setVisibleComments] = useState<any[]>([]);
+const [loadedCount, setLoadedCount] = useState(10);
 useEffect(()=>{
   if(!movie || movie._id != movieObject._id){
     dispatch(updateMovie(movieObject))
+    dispatch(getAllComments(movieObject._id))
 }
-},[dispatch,movieObject])
+},[dispatch,movieObject,comments])
 
 useEffect(()=>{
   
@@ -35,17 +40,25 @@ useEffect(()=>{
 
 },[movie, user ]); 
 
-  const [comments, setComments] = useState('');
-  const [commentList, setCommentList] = useState([
-    'Great movie!',
-    'Amazing plot and cinematography.',
-    'The acting was top notch.',
-  ]);
+useEffect(() => {
+  if (comments) {
+    setVisibleComments(comments.slice(0, 10)); 
+  }
+}, [comments]);
 
-  const addComment = () => {
-    if (comments.trim()) {
-      setCommentList((prev) => [...prev, comments.trim()]);
-      setComments('');
+const loadMoreComments = () => {
+  const nextComments = comments.slice(0, loadedCount + 3);
+  setVisibleComments(nextComments);
+  setLoadedCount(prev => prev + 3);
+};
+
+  const [content, setContent] = useState('');
+ 
+
+  const addComment = (movieId:string,content:string) => {
+    if (content.trim()) {
+      dispatch(addcomment({movieId,content}))
+      setContent('');
     }
   };
 
@@ -144,23 +157,41 @@ useEffect(()=>{
         </View>
 
         <View style={styles.commentsSection}>
+          
+
+          <View style={styles.commentsSection}>
           <TextInput
             style={styles.commentInput}
             placeholder="Write a comment..."
             placeholderTextColor="#bbb"
-            value={comments}
-            onChangeText={setComments}
-            onSubmitEditing={addComment}
+            value={content}
+            onChangeText={setContent}
+            onSubmitEditing={() => addComment(movie._id, content)}
           />
-          <TouchableOpacity onPress={addComment} style={styles.addCommentButton}>
+          <TouchableOpacity onPress={() => addComment(movie._id, content)} style={styles.addCommentButton}>
             <Text style={styles.addCommentText}>Post Comment</Text>
           </TouchableOpacity>
 
-          <View style={styles.commentList}>
-            {commentList.map((comment, index) => (
-              <Text key={index} style={styles.commentText}>{comment}</Text>
-            ))}
-          </View>
+          <FlatList
+            data={visibleComments}
+            renderItem={({ item }) => <CommentItem commentobj={item} />}
+            keyExtractor={(item, index) => index.toString()}
+            onEndReached={()=>loadMoreComments}
+            onEndReachedThreshold={0.5} 
+            
+          />
+          {
+            (visibleComments.length < comments.length) ?(
+                <TouchableOpacity onPress={loadMoreComments} style={{ marginTop: 10, alignSelf: 'center' }}>
+            <Text style={{ color: 'gray' }}>------------ Load More Comments ------------</Text>
+          </TouchableOpacity>
+            ):(
+              <Text style={{ color: 'gray' }}>------------ end of Comments ------------</Text>
+
+            )
+          }
+        
+        </View>
         </View>
       </View>
     </ScrollView>
@@ -173,11 +204,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#121212',
     padding: 20,
   },
+  profilecontainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap:10
+  },
+  
   posterImage: {
     width: '100%',
     height: 400,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    marginBottom: 20,
   },
   detailsContainer: {
     padding: 15,
@@ -290,8 +333,9 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   commentText: {
-    color: '#bbb',
-    fontSize: 16,
+    color: '#fff',
+    fontSize: 12,
+    fontFamily:'',
     marginBottom: 8,
   },
   userRatingContainer: {
