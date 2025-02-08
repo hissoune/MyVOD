@@ -19,10 +19,14 @@ import { Ionicons } from "@expo/vector-icons"
 import { isValidCardNumber } from "@/hooks/helpers"
 import CustomAlert from "@/components/custumAllert"
 import { useLocalSearchParams, useRouter } from "expo-router"
+import SubscriptionTypeSelector from "@/components/SubscriptionTypeSelector"
+import { useAppDispatch } from "@/hooks/useAppDispatch"
+import { createsubscription } from "../(redux)/subscriptionSlice"
 
 export default function PaymentScreen() {
     const { movieData } = useLocalSearchParams();
-    console.log(movieData);
+    const [subscriptionType, setSubscriptionType] = useState("basic");
+
     
   const [cardNumber, setCardNumber] = useState("4111 1111 1111 1111")
   const [expiryDate, setExpiryDate] = useState(new Date())
@@ -40,6 +44,7 @@ export default function PaymentScreen() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+const dispatch = useAppDispatch()
 
   const handlePayment = async () => {
     setIsLoading(true)
@@ -62,8 +67,9 @@ export default function PaymentScreen() {
     }
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
+      
+      await dispatch(createsubscription(subscriptionType)).unwrap();    
+       
       setAlertTitle("Success")
       setAlertMessage("Payment processed successfully!")
       setShowAlert(true)
@@ -211,6 +217,9 @@ export default function PaymentScreen() {
                   maxLength={3}
                 />
               </View>
+            </View>
+            <View style={styles.inputGroup}>
+            <SubscriptionTypeSelector subscriptionType={subscriptionType} setSubscriptionType={setSubscriptionType}/>
             </View>
 
             <TouchableOpacity style={styles.payButton} onPress={handlePayment} disabled={isLoading}>
