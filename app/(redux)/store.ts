@@ -4,6 +4,7 @@ import { moviesReducer } from "./moviesSlice";
 import { sessionsReducer } from "./sessionsSlice";
 import { ReservationSliceReducer } from "./reservationSlice";
 import { commentsReducer } from "./commentsSlice";
+import { subscriptionReducer } from "./subscriptionSlice";
 
  const store = configureStore({
     reducer:{
@@ -11,8 +12,8 @@ import { commentsReducer } from "./commentsSlice";
             movies: moviesReducer,
             sessions:sessionsReducer,
             reservations:ReservationSliceReducer,
-            comments:commentsReducer
-
+            comments:commentsReducer,
+            subscription: subscriptionReducer,
     }
 });
 export type RootState = ReturnType<typeof store.getState>;
