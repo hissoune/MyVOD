@@ -95,8 +95,10 @@ const loadMoreComments = () => {
     const movieData = encodeURIComponent(JSON.stringify(item));
     router.push(`/details/reserveSeate?movie=${movieData}`);  
   };
-  const handlePressPayment =()=>{
-    router.push(`/details/payment`);
+  const handlePressPayment =(item:any)=>{
+    const movieData = encodeURIComponent(JSON.stringify(item));
+
+    router.push(`/details/payment?movieData=${movieData}`);
   }
   return (
    
@@ -165,7 +167,7 @@ const loadMoreComments = () => {
         <View style={styles.container}>
       <TouchableOpacity
         style={styles.paymentButton}
-        onPress={() => handlePressPayment()}
+        onPress={() => handlePressPayment(movie)}
       >
         <Ionicons name="card-outline" size={24} color="white" style={styles.icon} />
         <Text style={styles.buttonText}>Subscribe Now</Text>
