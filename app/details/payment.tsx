@@ -12,14 +12,18 @@ import {
   Platform,
   Modal,
   ScrollView,
+  ActivityIndicator,
 } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { Ionicons } from "@expo/vector-icons"
 import { isValidCardNumber } from "@/hooks/helpers"
 import CustomAlert from "@/components/custumAllert"
-import { useRouter } from "expo-router"
+import { useLocalSearchParams, useRouter } from "expo-router"
 
 export default function PaymentScreen() {
+    const { movieData } = useLocalSearchParams();
+    console.log(movieData);
+    
   const [cardNumber, setCardNumber] = useState("4111 1111 1111 1111")
   const [expiryDate, setExpiryDate] = useState(new Date())
   const [cvv, setCvv] = useState("123")
@@ -34,9 +38,12 @@ export default function PaymentScreen() {
     cvv: false,
     cardHolder: false,
   })
-const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
+    setIsLoading(true)
+
     const newErrors = {
       cardNumber: !isValidCardNumber(cardNumber),
       expiryDate: expiryDate <= new Date(),
@@ -50,14 +57,23 @@ const router = useRouter()
       setAlertTitle("Error")
       setAlertMessage("Please correct the highlighted fields.")
       setShowAlert(true)
+      setIsLoading(false)
       return
     }
 
-    setAlertTitle("Success")
-    setAlertMessage("Payment processed successfully!")
-    setShowAlert(true)
-    
- 
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      setAlertTitle("Success")
+      setAlertMessage("Payment processed successfully!")
+      setShowAlert(true)
+    } catch (error) {
+      setAlertTitle("Error")
+      setAlertMessage("Payment processing failed. Please try again.")
+      setShowAlert(true)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const formatCardNumber = (input: string) => {
@@ -197,14 +213,24 @@ const router = useRouter()
               </View>
             </View>
 
-            <TouchableOpacity style={styles.payButton} onPress={handlePayment}>
-              <Text style={styles.payButtonText}>Pay Now</Text>
+            <TouchableOpacity style={styles.payButton} onPress={handlePayment} disabled={isLoading}>
+              {isLoading ? <ActivityIndicator color="white" /> : <Text style={styles.payButtonText}>Pay Now</Text>}
             </TouchableOpacity>
           </View>
         </LinearGradient>
       </KeyboardAvoidingView>
       {renderDatePicker()}
-      <CustomAlert visible={showAlert} title={alertTitle} message={alertMessage} onClose={() => setShowAlert(false)} />
+      <CustomAlert
+        visible={showAlert}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => {
+          setShowAlert(false)
+          if (alertTitle === "Success") {
+            router.push(`/details/moviesDetails?movieData=${movieData}`)
+          }
+        }}
+      /> 
     </SafeAreaView>
   )
 }
