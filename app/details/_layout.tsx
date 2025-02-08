@@ -32,6 +32,7 @@ const [isAuth,setIsAuth] = useState(true)
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack >
       <Stack.Screen name="moviesDetails" options={{ headerShown: true  }} />
+    
 
       </Stack>
       <StatusBar style="auto" />

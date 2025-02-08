@@ -11,6 +11,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { rateMmovie, updateMovie } from '../(redux)/moviesSlice';
 import { addcomment, getAllComments } from '../(redux)/commentsSlice';
 import CommentItem from '@/components/CommentItem';
+import { Ionicons } from "@expo/vector-icons"; 
 
 const MoviesDetails = () => {
   const { movieData } = useLocalSearchParams();
@@ -94,6 +95,9 @@ const loadMoreComments = () => {
     const movieData = encodeURIComponent(JSON.stringify(item));
     router.push(`/details/reserveSeate?movie=${movieData}`);  
   };
+  const handlePressPayment =()=>{
+    router.push(`/details/payment`);
+  }
   return (
    
  <ScrollView  contentContainerStyle={styles.container}>
@@ -155,9 +159,18 @@ const loadMoreComments = () => {
           <TouchableOpacity style={styles.reserveButton} onPress={()=>{handlePressReservation(movie)}}>
             <Text style={styles.buttonText}>Reserve Seat</Text>
           </TouchableOpacity>
+          
         </View>
 
-   
+        <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.paymentButton}
+        onPress={() => handlePressPayment()}
+      >
+        <Ionicons name="card-outline" size={24} color="white" style={styles.icon} />
+        <Text style={styles.buttonText}>Subscribe Now</Text>
+      </TouchableOpacity>
+    </View>
           
 
           <View style={styles.commentsSection}>
@@ -212,6 +225,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap:10
+  },
+  paymentButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#4CAF50", 
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5, 
+  },
+  icon: {
+    marginRight: 10,
   },
   
   posterImage: {

@@ -13,6 +13,7 @@ export const loadUser = createAsyncThunk("auth/loadUser", async () => {
   }
 });
 
+
 export const addFavorite =createAsyncThunk(
     "movies/favorites",
     async (movieId:string) => {
@@ -26,10 +27,12 @@ const initialState: {
   user: User | null;
   token: string | null;
   isLoading: boolean;
+  isAuthenticated:boolean;
 } = {
   user: null,
   token: null,
   isLoading: true,
+  isAuthenticated: false
 };
 
 const authSlice = createSlice({
@@ -62,6 +65,7 @@ const authSlice = createSlice({
         if (action.payload) {
           state.user = action.payload.user;
           state.token = action.payload.token;
+          state.isAuthenticated = true;
         }
         state.isLoading = false;
       })
