@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { useAuth } from "../context/authProvider";
 import { useAppDispatch } from '@/hooks/useAppDispatch';
-import { loadUser } from '@/app/(redux)/authSlice';
+import { issubscriped, loadUser } from '@/app/(redux)/authSlice';
 const AppWrapper = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(loadUser())
-
+     dispatch(issubscriped())
   }, [dispatch]);
 
   return (
