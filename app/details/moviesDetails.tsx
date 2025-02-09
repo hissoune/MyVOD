@@ -22,10 +22,13 @@ const dispatch = useAppDispatch()
 
 const {movie}=useSelector((state:RootState)=>state.movies)
 const {user}=useSelector((state:RootState)=>state.auth)
+const {issubscripped}=useSelector((state:RootState)=>state.auth)
 const {comments}=useSelector((state:RootState)=>state.comments)
 const [userRating, setUserRating] = useState(0);
 const [visibleComments, setVisibleComments] = useState<any[]>([]);
 const [loadedCount, setLoadedCount] = useState(10);
+console.log("ffffffffffffffffff",issubscripped);
+
 useEffect(()=>{
   if(!movie || movie._id != movieObject._id){
     dispatch(updateMovie(movieObject))
@@ -155,9 +158,16 @@ const loadMoreComments = () => {
         
 
         <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.watchButton} onPress={()=>handlePress(movie)}>
-            <Text style={styles.buttonText}>Watch Movie</Text>
-          </TouchableOpacity>
+          {issubscripped?(
+        <TouchableOpacity style={styles.watchButton}  onPress={()=>handlePress(movie)}>
+                    <Text style={styles.buttonText}>Watch Mohvie</Text>
+                  </TouchableOpacity>
+          ):(
+        <TouchableOpacity style={styles.watchButton} disabled onPress={()=>handlePress(movie)}>
+                            <Text style={styles.buttonText}>Watch Movie</Text>
+                          </TouchableOpacity>
+          )}
+         
           <TouchableOpacity style={styles.reserveButton} onPress={()=>{handlePressReservation(movie)}}>
             <Text style={styles.buttonText}>Reserve Seat</Text>
           </TouchableOpacity>
