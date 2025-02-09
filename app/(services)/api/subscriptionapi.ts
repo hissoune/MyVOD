@@ -8,4 +8,11 @@ const createSubscription = async (type:string) =>{
      return response.data
 };
 
-export {createSubscription}
+const isSubscriped = async () =>{
+    const response  = await  axiosInstance.get('subscriptions/isSubscriped')
+    
+    
+    return response.data
+};
+
+export {createSubscription,isSubscriped}
