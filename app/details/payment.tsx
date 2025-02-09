@@ -22,6 +22,7 @@ import { useLocalSearchParams, useRouter } from "expo-router"
 import SubscriptionTypeSelector from "@/components/SubscriptionTypeSelector"
 import { useAppDispatch } from "@/hooks/useAppDispatch"
 import { createsubscription } from "../(redux)/subscriptionSlice"
+import { issubscriped } from "../(redux)/authSlice"
 
 export default function PaymentScreen() {
     const { movieData } = useLocalSearchParams();
@@ -69,7 +70,7 @@ const dispatch = useAppDispatch()
     try {
       
       await dispatch(createsubscription(subscriptionType)).unwrap();    
-       
+       await   dispatch(issubscriped())
       setAlertTitle("Success")
       setAlertMessage("Payment processed successfully!")
       setShowAlert(true)
