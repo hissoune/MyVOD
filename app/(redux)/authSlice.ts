@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { User } from "@/types";
 import { AddToFavorite } from "../(services)/api/moviesapi";
+import { isSubscriped } from "../(services)/api/subscriptionapi";
 
 export const loadUser = createAsyncThunk("auth/loadUser", async () => {
   try {
@@ -21,6 +22,16 @@ export const addFavorite =createAsyncThunk(
         const user = await AddToFavorite(movieId);
         return user;
       }
+);
+
+export const issubscriped = createAsyncThunk(
+  "user/subscripe",
+  async ()=>{
+    const issubs = await isSubscriped()
+ 
+    
+    return issubs
+  }
 )
 
 const initialState: {
@@ -28,11 +39,13 @@ const initialState: {
   token: string | null;
   isLoading: boolean;
   isAuthenticated:boolean;
+  issubscripped:boolean
 } = {
   user: null,
   token: null,
   isLoading: true,
-  isAuthenticated: false
+  isAuthenticated: false,
+  issubscripped:false
 };
 
 const authSlice = createSlice({
@@ -70,6 +83,16 @@ const authSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(loadUser.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(issubscriped.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(issubscriped.fulfilled, (state, action) => {
+       
+          state.issubscripped = action.payload;
+         
+        
         state.isLoading = false;
       })
       .addCase(addFavorite.pending, (state)=>{
