@@ -3,12 +3,16 @@ import { Stack, useRouter } from "expo-router";
 import { useAuth } from "../context/authProvider";
 import { useAppDispatch } from '@/hooks/useAppDispatch';
 import { issubscriped, loadUser } from '@/app/(redux)/authSlice';
+import { registerForPushNotificationsAsync } from "@/hooks/notifications";
 const AppWrapper = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    // registerForPushNotificationsAsync(dispatch);
+
     dispatch(loadUser())
      dispatch(issubscriped())
+
   }, [dispatch]);
 
   return (
