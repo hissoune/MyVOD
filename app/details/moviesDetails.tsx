@@ -27,7 +27,6 @@ const {comments}=useSelector((state:RootState)=>state.comments)
 const [userRating, setUserRating] = useState(0);
 const [visibleComments, setVisibleComments] = useState<any[]>([]);
 const [loadedCount, setLoadedCount] = useState(10);
-console.log("ffffffffffffffffff",issubscripped);
 
 useEffect(()=>{
   if(!movie || movie._id != movieObject._id){

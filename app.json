@@ -3,6 +3,9 @@
     "name": "MyVOD",
     "slug": "MyVOD",
     "version": "1.0.0",
+    "extra": {
+     
+    },
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -40,3 +43,4 @@
     }
   }
 }
+
