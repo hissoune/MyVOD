@@ -54,7 +54,9 @@
     "react-native-webview": "13.12.5",
     "react-redux": "^9.2.0",
     "undefined": "react-native-async-storage/async-storage",
-    "yup": "^1.6.1"
+    "yup": "^1.6.1",
+    "expo-notifications": "~0.29.13",
+    "expo-device": "~7.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
